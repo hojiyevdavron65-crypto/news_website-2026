@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<!-- Top News Start-->
+<div class="top-news">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 tn-left">
+                <div class="tn-img">
+                    {% if latest_new.cover %}
+                    <img src="{{ latest_new.cover.url }}" style="width: 100%; height: 530px; object-fit: cover;"/>
+                    {% else %}
+                    <p>{% trans 'Bu maqola rasmsiz' %}</p>
+                    {% endif %}
+                    <div class="tn-content">
+                        <div class="tn-content-inner">
+                            <a href="{% url 'single' latest_new.slug %}">
+                                <i class="far fa-clock mr-1"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}{{ latest_new.created_at|time:" h:i" }}
+                            </a>
+                            <a class="tn-title" href="{% url 'single' latest_new.slug %}">{{ latest_new.title }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 tn-right">
+                <div class="row">
+                    {% for n in latest_new_4 %}
+                    <div class="col-md-6">
+                        <div class="tn-img">
+                            {% if n.cover %}
+                            <img src="{{ n.cover.url }}" style="width: 100%; height: 250px; object-fit: cover;"/>
+                            {% else %}
+                            <p>{% trans 'Bu maqola rasmsiz' %}</p>
+                            {% endif %}
+                            <div class="tn-content">
+                                <div class="tn-content-inner">
+                                    <a href="{% url 'single' n.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ n.created_at|date:"SHORT_DATE_FORMAT" }}{{ n.created_at|time:" h:i" }}
+                                    </a>
+                                    <a class="tn-title" href="{% url 'single' n.slug %}">{{ n.title }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Top News End-->
+
+
+<!-- Category News Start-->
+<div class="cat-news">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <h2><i class="fas fa-align-justify"></i>{% trans 'Sport' %}</h2>
+                <div class="row cn-slider">
+                    {% for n in sport %}
+                    <div class="col-md-6">
+                        <div class="cn-img">
+                            <img src="{{n.cover.url}}" style="width: 100%; height: 225px; object-fit: cover;"/>
+                            <div class="cn-content">
+                                <div class="cn-content-inner">
+                                    <a href="{% url 'single' n.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ n.created_at|date:"SHORT_DATE_FORMAT" }}{{ n.created_at|time:" h:i" }}
+                                    </a>
+                                    <a class="cn-title" href="{% url 'single' n.slug %}">{{n.title}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2><i class="fas fa-align-justify"></i>{% trans 'Texnologiya' %}</h2>
+                <div class="row cn-slider">
+                    {% for i in techno %}
+                    <div class="col-md-6">
+                        <div class="cn-img">
+                            <img src="{{i.cover.url}}" style="width: 100%; height: 225px; object-fit: cover;"/>
+                            <div class="cn-content">
+                                <div class="cn-content-inner">
+                                    <a href="{% url 'single' i.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
+                                    </a>
+                                    <a class="cn-title" href="{% url 'single' i.slug %}">{{i.title}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Category News End-->
+
+
+<!-- Category News Start-->
+<div class="cat-news">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <h2><i class="fas fa-align-justify"></i>{% trans 'Iqtisodiyot' %}</h2>
+                <div class="row cn-slider">
+                    {% for i in iqtisod %}
+                    <div class="col-md-6">
+                        <div class="cn-img">
+                            <img src="{{ i.cover.url }}" style="width: 100%; height: 225px; object-fit: cover;"/>
+                            <div class="cn-content">
+                                <div class="cn-content-inner">
+                                    <a href="{% url 'single' i.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
+                                    </a>
+                                    <a class="cn-title" href="{% url 'single' i.slug %}">{{ i.title }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2><i class="fas fa-align-justify"></i>{% trans "Ta'lim" %}</h2>
+                <div class="row cn-slider">
+                    {% for i in edu %}
+                    <div class="col-md-6">
+                        <div class="cn-img">
+                            <img src="{{ i.cover.url }}" style="width: 100%; height: 225px; object-fit: cover;"/>
+                            <div class="cn-content">
+                                <div class="cn-content-inner">
+                                    <a href="{% url 'single' i.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
+                                    </a>
+                                    <a class="cn-title" href="{% url 'single' i.slug %}">{{i.title}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Category News End-->
+
+
+<!-- Main News Start-->
+<div class="main-news">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Oxirgi yangiliklar' %}</h2>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mn-img">
+                                    <img src="{{ latest_new.cover.url }}"
+                                         style="width: 100%; height: 350px; object-fit: cover;"/>
+                                </div>
+                                <div class="mn-content">
+                                    <a class="mn-title" href="{% url 'single' latest_new.slug %}">{{ latest_new.title }}</a>
+                                    <a href="{% url 'single' latest_new.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}{{ latest_new.created_at|time:" h:i" }}
+                                    </a>
+                                    <p class="mn-text-slice">
+                                        {{ latest_new.body|truncatewords:20 }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                {% for i in news %}
+                                <div class="mn-list" style="margin-bottom: 15px;">
+                                    <div class="mn-img"
+                                         style="width: 100px; height: 75px; float: left; margin-right: 15px;">
+                                        <img src="{{ i.cover.url }}"
+                                             style="width: 100%; height:100%; object-fit: cover;"/>
+                                    </div>
+                                    <div class="mn-content">
+                                        <a class="mn-title" href="{% url 'single' i.slug %}">{{ i.title }}</a>
+                                        <a href="{% url 'single' i.slug %}">
+                                            <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
+                                        </a>
+                                    </div>
+                                    <div style="clear: both;"></div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" style="margin-top: 30px;">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Mashhur Yangiliklar' %}</h2>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mn-img">
+                                    <img src="{{latest_new.cover.url}}"/>
+                                </div>
+                                <div class="mn-content">
+                                    <a class="mn-title"
+                                       href="{% url 'single' latest_new.slug %}">{{latest_new.title}}</a>
+                                    <a href="{% url 'single' latest_new.slug %}">
+                                        <i class="far fa-clock mr-1"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}{{ latest_new.created_at|time:" h:i" }}
+                                    </a>
+                                    <p>
+                                        {{latest_new.title}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                {% for i in news %}
+                                <div class="mn-list">
+                                    <div class="mn-img">
+                                        <img src="{{i.cover.url}}"/>
+                                    </div>
+                                    <div class="mn-content">
+                                        <a class="mn-title" href="{% url 'single' i.slug %}">{{i.title}}</a>
+                                        <a href="{% url 'single' i.slug %}">
+                                            <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="sidebar">
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Kategoriyalar' %}</h2>
+                        <div class="category">
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'local' %}">{% trans 'Mahalliy' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'global' %}">{% trans 'Xorijiy' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'techno' %}">{% trans 'Texnologiya' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'sport' %}">{% trans 'Sport' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'finance' %}">{% trans 'Iqtisodiyot' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'society' %}">{% trans 'Jamiyat' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'edu' %}">{% trans "Ta'lim" %}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Taglar' %}</h2>
+                        <div class="tags">
+                            {% for i in tag %}
+                            <a href="">{{i.name}}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Reklama uchun1' %}</h2>
+                        <div class="image">
+                            <a href=""><img src="{% static 'img/adds-1.jpg' %}" alt="Image"></a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Reklama uchun2' %}</h2>
+                        <div class="image">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <a href=""><img src="{% static 'img/adds-2.jpg' %}" alt="Image"></a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <a href=""><img src="{% static 'img/adds-2.jpg' %}" alt="Image"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main News End-->
+
+{% endblock content %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<main class="py-5 bg-light">
+    <div class="container">
+        <h1 class="mb-5 border-bottom pb-3 font-weight-bold" style="color: #111; font-size: 2rem;">{% trans 'Jamiyat Yangiliklari' %}</h1>
+
+        <div class="row">
+            {% for i in page_obj %}
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col-sm-4">
+                            <a href="{% url 'single' i.slug %}">
+                                <img src="{{ i.cover.url }}" class="img-fluid rounded w-100" alt="{{ i.title }}" style="height: 110px; object-fit: cover;">
+                            </a>
+                        </div>
+
+                        <div class="col-sm-8 pl-sm-3 pt-2 pt-sm-0">
+                            <div class="text-muted small mb-1">
+                                <a href="{% url 'single' i.slug %}">
+                                    <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }} {{ i.created_at|time:"h:i" }}
+                                </a>
+                            </div>
+
+                            <h5 class="font-weight-bold h6 mb-0" style="line-height: 1.4;">
+                                <a href="{% url 'single' i.slug %}" class="text-dark text-decoration-none">{{ i.title }}</a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin: 30px 0; text-align: center;">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">{% trans 'Oldingi' %}</a>
+            {% endif %}
+
+            <span style="margin: 0 10px;">
+                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">{% trans 'Keyingi' %}</a>
+            {% endif %}
+        </div>
+    </div>
+</main>
+{% endblock content %}

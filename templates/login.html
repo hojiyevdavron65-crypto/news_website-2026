@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="login-page py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow-sm border-0 rounded-0">
+                    <div class="card-header bg-dark text-white text-center py-4 border-0 rounded-0">
+                        <h3 class="mb-1 font-weight-bold text-uppercase" style="letter-spacing: 1px; color: #ffffff;">{% trans 'Tizimga kirish' %}</h3>
+                        <p class="small mb-0" style="color: rgba(255,255,255,0.6);">{% trans "News 24 — Eng so'nggi yangiliklar olami" %}</p>
+                    </div>
+
+                    <div class="card-body p-4 bg-white">
+                        {% if form.errors or form.non_field_errors %}
+                            <div class="alert alert-danger rounded-0 small p-2 text-center" role="alert">
+                                <i class="fas fa-exclamation-circle mr-1"></i> {% trans "Foydalanuvchi nomi yoki parol noto'g'ri!" %}
+                            </div>
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'login' %}">
+                            {% csrf_token %}
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-600 text-dark small"><i class="fas fa-user mr-1"></i> {% trans 'Foydalanuvchi nomi:' %}</label>
+                                <input type="text" name="username" class="form-control rounded-0" placeholder="{% trans 'Foydalanuvchi nomingizni kiriting' %}" required autofocus>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="font-weight-600 text-dark small"><i class="fas fa-lock mr-1"></i> {% trans 'Parol:' %}</label>
+                                <input type="password" name="password" class="form-control rounded-0" placeholder="{% trans 'Parolingizni kiriting' %}" required>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4 small">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="rememberMe" name="remember">
+                                    <label class="custom-control-label text-muted" for="rememberMe">{% trans 'Eslab qolish' %}</label>
+                                </div>
+                                <a href="#" class="text-danger text-decoration-none font-weight-bold">{% trans 'Parolni unutdingizmi?' %}</a>
+                            </div>
+
+                            <button type="submit" class="btn w-100 py-2 rounded-0 font-weight-bold text-uppercase"
+                                style="background: #111; border: none; color: #ffffff; letter-spacing: 0.5px; transition: 0.3s;">
+                                <i class="fas fa-sign-in-alt mr-1"></i> {% trans 'Kirish' %}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-white border-top text-center py-3 rounded-0">
+                        <span class="text-muted small">{% trans "Hali ro'yxatdan o'tmadingizmi? " %}</span>
+                        <a href="{% url 'register' %}" class="text-danger font-weight-bold text-decoration-none small">Yangi profil ochish</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-page .btn:hover {
+        background: #ef233c !important;
+        color: #fff !important;
+    }
+    .font-weight-600 { font-weight: 600; }
+</style>
+{% endblock content %}

@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+
+<!-- Breadcrumb Start -->
+<div class="breadcrumb-wrap">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">{% trans 'Bosh sahifa' %}</a></li>
+            <li class="breadcrumb-item"><a href="{{ back_url }}">{% trans 'Yangiliklar' %}</a></li>
+            <li class="breadcrumb-item active">{% trans 'Yangiliklar qismi' %}</li>
+        </ul>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+
+<!-- Single News Start-->
+<div class="single-news">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="sn-img">
+                    <img src="{{ article.cover.url }}"/>
+                </div>
+                <div class="sn-content">
+                    <a class="sn-title" href="">{{ article.title }}</a>
+                    <a href="{% url 'single' article.slug %}">
+                        <i class="far fa-clock mr-1"></i>{{ article.created_at|date:"SHORT_DATE_FORMAT" }}{{article.created_at|time:" h:i" }}
+                    </a>
+                    <span class="badge badge-secondary ml-2 py-1 px-2">
+                        👁️ {{ article.views_count|default:0 }}
+                    </span>
+                    <p>
+                        {{ article.body }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="sidebar">
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Kategoriyalar' %}</h2>
+                        <div class="category">
+                            <ul class="fa-ul">
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'local' %}">{% trans 'Mahalliy' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'global' %}">{% trans 'Xorijiy' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'techno' %}">{% trans 'Texnologiya' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'sport' %}">{% trans 'Sport' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'finance' %}">{% trans 'Iqtisodiyot' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'society' %}">{% trans 'Jamiyat' %}</a></li>
+                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'edu' %}">{% trans "Ta'lim" %}</a></li>
+                            </ul>
+                        </div>
+
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Taglar' %}</h2>
+                        <div class="tags">
+                            {% for a in tag %}
+                            <a href="">{{a.name}}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Reklama uchun1' %}</h2>
+                        <div class="image">
+                            <a href=""><img src="{% static 'img/adds-1.jpg' %}" alt="Image"></a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h2><i class="fas fa-align-justify"></i>{% trans 'Reklama uchun2' %}</h2>
+                        <div class="image">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <a href=""><img src="{% static 'img/adds-2.jpg' %}" alt="Image"></a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <a href=""><img src="{% static 'img/adds-2.jpg' %}" alt="Image"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Single News End-->
+<div class="comments-section"
+     style="margin-top: 50px; background: #fff; padding: 30px; border: 1px solid #edf2f7; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 30px; position: relative; padding-bottom: 10px;">
+        <i class="far fa-comments" style="color: #FF6F61; margin-right: 8px;"></i> {% trans 'Barcha izohlar' %}
+        <span class="badge badge-pill badge-dark" style="font-size: 14px; vertical-align: middle; margin-left: 5px;">{{ comments|length }}</span>
+        <span style="position: absolute; bottom: 0; left: 0; width: 50px; height: 2px; background: #FF6F61;"></span>
+    </h2>
+
+    <div class="comment-list" style="margin-bottom: 40px;">
+        {% for c in comments %}
+        <div class="single-comment" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed #e2e8f0;">
+            <div style="display: flex;">
+                {% if c.author.profile.avatar %}
+                <img src="{{ c.author.profile.avatar.url }}" alt="{{ c.author.username }}"
+                     style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; flex-shrink: 0;">
+                {% else %}
+                <div class="comment-avatar"
+                     style="width: 50px; height: 50px; background: #FF6F61; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; margin-right: 15px; flex-shrink: 0;">
+                    {{ c.author.username|first|upper }}
+                </div>
+                {% endif %}
+                <div class="comment-content" style="flex-grow: 1;">
+                    <div class="comment-meta" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <h5 style="font-size: 16px; font-weight: 600; margin: 0; color: #333;">{{ c.author }}</h5>
+                        {% if c.created_at %}
+                        <span style="font-size: 12px; color: #a0aec0;"><i class="far fa-clock"></i> {{ c.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                        {% endif %}
+                    </div>
+                    <p style="font-size: 15px; color: #4a5568; line-height: 1.6; margin: 0 0 10px 0;">
+                        {{ c.body }}
+                    </p>
+
+                    {% if request.user.is_authenticated %}
+                    <button onclick="toggleReplyForm('{{ c.id }}')" style="background: none; border: none; color: #FF6F61; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
+                        <i class="fas fa-reply" style="margin-right: 3px;"></i> {% trans 'Javob berish' %}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="replies-list" style="margin-left: 65px; margin-top: 15px;">
+                {% for reply in c.replies.all %}
+                <div class="single-reply" style="display: flex; margin-bottom: 15px; padding: 10px 0 0 0; border-top: 1px solid #f7fafc;">
+                    {% if reply.author.profile.avatar %}
+                    <img src="{{ reply.author.profile.avatar.url }}" alt="{{ reply.author.username }}"
+                         style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 12px; flex-shrink: 0;">
+                    {% else %}
+                    <div class="reply-avatar"
+                         style="width: 35px; height: 35px; background: #718096; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; margin-right: 12px; flex-shrink: 0;">
+                        {{ reply.author.username|first|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="reply-content" style="flex-grow: 1;">
+                        <div class="reply-meta" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                            <h6 style="font-size: 14px; font-weight: 600; margin: 0; color: #4a5568;">{{ reply.author }} <span style="font-weight: 400; color: #a0aec0; font-size: 12px;">{% trans "javob berdi" %}</span></h6>
+                            <span style="font-size: 11px; color: #cbd5e0;"><i class="far fa-clock"></i> {{ reply.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                        </div>
+                        <p style="font-size: 14px; color: #4a5568; line-height: 1.5; margin: 0;">
+                            {{ reply.body }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="reply-form-{{ c.id }}" style="display: none; margin-left: 65px; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 3px solid #FF6F61;">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="{{ c.id }}">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <textarea name="body" class="form-control" rows="2" placeholder="{% trans 'Javobingizni yozing...' %}" style="border: 1px solid #cbd5e0; border-radius: 4px; padding: 10px; font-size: 14px; resize: none; width: 100%; box-sizing: border-box; background: #fff;" required></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn text-white" style="background: #FF6F61; border: none; font-weight: 600; padding: 6px 15px; border-radius: 4px; font-size: 13px; cursor: pointer;">
+                            {% trans 'Yuborish' %}
+                        </button>
+                        <button type="button" onclick="toggleReplyForm('{{ c.id }}')" class="btn" style="background: #e2e8f0; border: none; color: #4a5568; font-weight: 600; padding: 6px 15px; border-radius: 4px; font-size: 13px; cursor: pointer;">
+                            {% trans 'Bekor qilish' %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center" style="padding: 40px 20px; background: #f7fafc; border-radius: 5px;">
+            <i class="far fa-comment-dots" style="font-size: 40px; color: #cbd5e0; margin-bottom: 10px; display: block;"></i>
+            <p style="color: #718096; margin: 0; font-size: 15px;">{% trans "Hozircha izohlar yo'q. Birinchi bo'lib o'z fikringizni qoldiring!" %}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="comment-form-wrapper" style="background: #f8f9fa; padding: 25px; border-radius: 5px;">
+        <h4 style="font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #2d3748;">
+            <i class="fas fa-pen" style="font-size: 14px; color: #FF6F61; margin-right: 5px;"></i> {% trans 'Fikr bildirish' %}
+        </h4>
+        {% if request.user.is_authenticated %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="parent_id" value="">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <textarea name="body" class="form-control" rows="4" placeholder="{% trans 'Izohingizni shu yerga yozing...' %}" style="width: 100%; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 4px; padding: 12px; font-size: 15px; resize: none; background: #fff;" required></textarea>
+            </div>
+            <button type="submit" class="btn text-white" style="background: #FF6F61; border: none; font-weight: 600; padding: 10px 25px; border-radius: 4px; transition: all 0.3s ease; font-size: 15px; cursor: pointer;">
+                <i class="far fa-paper-plane" style="margin-right: 5px;"></i> {% trans 'Yuborish' %}
+            </button>
+        </form>
+        {% else %}
+        <div class="text-center p-4" style="background: #f8f9fa; border: 1px solid #dee2e6;">
+            <p class="text-muted mb-3" style="font-size: 15px;">
+                {% trans "Izoh qoldirish uchun iltimos saytga kiring yoki ro'yxatdan o'ting." %}
+            </p>
+            <a href="{% url 'login' %}" class="btn btn-sm btn-outline-dark mr-2">{% trans 'Tizimga kirish' %}</a>
+            <a href="{% url 'register' %}" class="btn btn-sm text-white" style="background: #FF6F61;">{% trans "Ro'yxatdan o'tish" %}</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleReplyForm(commentId) {
+    var form = document.getElementById('reply-form-' + commentId);
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+    } else {
+        form.style.display = 'none';
+    }
+}
+</script>
+{% endblock content %}
