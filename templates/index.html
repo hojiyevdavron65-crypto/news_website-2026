@@ -3,44 +3,189 @@
 {% load i18n %}
 
 {% block content %}
-<!-- Top News Start-->
-<div class="top-news">
+<style>
+    :root {
+        --bg-body: #f8f9fa;
+        --bg-card: #ffffff;
+        --text-main: #1c1917;
+        --text-muted: #6c757d;
+        --border-color: #efefef;
+        --accent: #E47A2E;
+    }
+    body.dark-mode {
+        --bg-body: #14110F;
+        --bg-card: #1E1A17;
+        --text-main: #F2EDE7;
+        --text-muted: #A79E93;
+        --border-color: #2a2622;
+    }
+    body {
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        transition: background-color .3s, color .3s;
+    }
+
+    /* Kartalar va effektlar dizayni */
+    .news-card-custom {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        background: var(--bg-card);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .news-card-custom:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .text-line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Katta karta uchun overlay */
+    .card-gradient-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0) 100%);
+        padding: 25px 15px 15px 15px;
+        color: #fff;
+        z-index: 2;
+    }
+
+    /* Kichik kartalar ichidagi overlay paddingini moslashuvchan qilish */
+    .height-220 .card-gradient-overlay,
+    .height-240 .card-gradient-overlay {
+        padding: 15px 12px 12px 12px;
+    }
+
+    .cat-news.bg-light,
+    .main-news.bg-light {
+        background-color: var(--bg-body) !important;
+    }
+
+    .sidebar-widget {
+        background: var(--bg-card);
+        color: var(--text-main);
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .sidebar-widget h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--border-color);
+    }
+    .sidebar-widget a {
+        color: var(--text-main);
+    }
+    .tags a {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 3px;
+        background: rgba(128,128,128,0.12);
+        color: var(--text-main);
+        border-radius: 4px;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    .tags a:hover {
+        background: var(--accent);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .theme-toggle-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid var(--border-color);
+        background: var(--bg-card);
+        color: var(--text-main);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .theme-toggle-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .no-image-placeholder {
+        background-color: rgba(128,128,128,0.12);
+        color: var(--text-muted);
+    }
+
+    /* Mobil moslashuv */
+    @media (max-width: 767px) {
+        .top-news .news-card-custom { min-height: 260px !important; }
+    }
+</style>
+
+<!-- Theme toggle -->
+<div class="container-fluid pt-3">
+    <div class="d-flex justify-content-end">
+        <button id="theme-toggle" type="button" class="theme-toggle-btn">
+            <i class="far fa-moon" id="icon-moon"></i>
+            <i class="far fa-sun d-none" id="icon-sun"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Top News Start -->
+<div class="top-news py-4">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6 tn-left">
-                <div class="tn-img">
+        <div class="row g-4 align-items-stretch">
+            <!-- Chap tomondagi Eng asosiy katta yangilik -->
+            <div class="col-lg-6 mb-3 mb-lg-0">
+                <div class="news-card-custom position-relative" style="min-height: 460px;">
                     {% if latest_new.cover %}
-                    <img src="{{ latest_new.cover.url }}" style="width: 100%; height: 530px; object-fit: cover;"/>
+                    <img src="{{ latest_new.cover.url }}" class="w-100 h-100" style="object-fit: cover; position: absolute; left: 0; top: 0;" alt="{{ latest_new.title }}"/>
                     {% else %}
-                    <p>{% trans 'Bu maqola rasmsiz' %}</p>
+                    <div class="no-image-placeholder d-flex align-items-center justify-content-center h-100 position-absolute w-100">
+                        <p class="m-0">{% trans 'Bu maqola rasmsiz' %}</p>
+                    </div>
                     {% endif %}
-                    <div class="tn-content">
-                        <div class="tn-content-inner">
-                            <a href="{% url 'single' latest_new.slug %}">
-                                <i class="far fa-clock mr-1"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}{{ latest_new.created_at|time:" h:i" }}
-                            </a>
-                            <a class="tn-title" href="{% url 'single' latest_new.slug %}">{{ latest_new.title }}</a>
-                        </div>
+                    <div class="card-gradient-overlay">
+                        <span class="text-white-50 small d-block mb-2">
+                            <i class="far fa-clock me-2"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }} {{ latest_new.created_at|time:"H:i" }}
+                        </span>
+                        <h3 class="font-weight-bold m-0" style="font-size: 22px; line-height: 1.4;">
+                            <a href="{% url 'single' latest_new.slug %}" class="text-white text-decoration-none stretched-link">{{ latest_new.title }}</a>
+                        </h3>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 tn-right">
-                <div class="row">
+
+            <!-- O'ng tomondagi 4 ta kichikroq blok -->
+            <div class="col-lg-6">
+                <div class="row g-3 h-100">
                     {% for n in latest_new_4 %}
-                    <div class="col-md-6">
-                        <div class="tn-img">
+                    <div class="col-sm-6">
+                        <div class="news-card-custom position-relative height-220" style="height: 220px;">
                             {% if n.cover %}
-                            <img src="{{ n.cover.url }}" style="width: 100%; height: 250px; object-fit: cover;"/>
+                            <img src="{{ n.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ n.title }}"/>
                             {% else %}
-                            <p>{% trans 'Bu maqola rasmsiz' %}</p>
+                            <div class="no-image-placeholder d-flex align-items-center justify-content-center h-100">
+                                <p class="small m-0">{% trans 'Rasmsiz' %}</p>
+                            </div>
                             {% endif %}
-                            <div class="tn-content">
-                                <div class="tn-content-inner">
-                                    <a href="{% url 'single' n.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ n.created_at|date:"SHORT_DATE_FORMAT" }}{{ n.created_at|time:" h:i" }}
-                                    </a>
-                                    <a class="tn-title" href="{% url 'single' n.slug %}">{{ n.title }}</a>
-                                </div>
+                            <div class="card-gradient-overlay">
+                                <span class="text-white-50 x-small d-block mb-1"><i class="far fa-clock me-2"></i>{{ n.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                                <h6 class="m-0 text-line-clamp-2" style="font-size: 15px; line-height: 1.4;">
+                                    <a href="{% url 'single' n.slug %}" class="text-white text-decoration-none stretched-link font-weight-bold">{{ n.title }}</a>
+                                </h6>
                             </div>
                         </div>
                     </div>
@@ -53,47 +198,50 @@
 <!-- Top News End-->
 
 
-<!-- Category News Start-->
-<div class="cat-news">
+<!-- Category News Start (Sport va Texnologiya) -->
+<div class="cat-news py-5 bg-light">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
-                <h2><i class="fas fa-align-justify"></i>{% trans 'Sport' %}</h2>
-                <div class="row cn-slider">
+        <div class="row g-5">
+            <!-- Sport -->
+            <div class="col-lg-6">
+                <h2 class="mb-4 d-flex align-items-center font-weight-bold"><i class="fas fa-volleyball-ball text-danger me-2"></i> {% trans 'Sport' %}</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
                     {% for n in sport %}
-                    <div class="col-md-6">
-                        <div class="cn-img">
-                            <img src="{{n.cover.url}}" style="width: 100%; height: 225px; object-fit: cover;"/>
-                            <div class="cn-content">
-                                <div class="cn-content-inner">
-                                    <a href="{% url 'single' n.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ n.created_at|date:"SHORT_DATE_FORMAT" }}{{ n.created_at|time:" h:i" }}
-                                    </a>
-                                    <a class="cn-title" href="{% url 'single' n.slug %}">{{n.title}}</a>
-                                </div>
+                    <div class="col">
+                        <div class="news-card-custom position-relative height-240" style="height: 240px;">
+                            <img src="{{ n.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ n.title }}"/>
+                            <div class="card-gradient-overlay">
+                                <span class="text-white-50 small"><i class="far fa-clock me-2"></i>{{ n.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                                <h6 class="mt-1 mb-0 text-line-clamp-2" style="font-size: 14px; line-height: 1.4;">
+                                    <a href="{% url 'single' n.slug %}" class="text-white text-decoration-none stretched-link font-weight-bold">{{ n.title }}</a>
+                                </h6>
                             </div>
                         </div>
                     </div>
+                    {% empty %}
+                    <div class="col-12"><p class="text-muted">{% trans "Hozircha maqolalar yo'q" %}</p></div>
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-md-6">
-                <h2><i class="fas fa-align-justify"></i>{% trans 'Texnologiya' %}</h2>
-                <div class="row cn-slider">
+
+            <!-- Texnologiya -->
+            <div class="col-lg-6">
+                <h2 class="mb-4 d-flex align-items-center font-weight-bold"><i class="fas fa-laptop text-primary me-2"></i> {% trans 'Texnologiya' %}</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
                     {% for i in techno %}
-                    <div class="col-md-6">
-                        <div class="cn-img">
-                            <img src="{{i.cover.url}}" style="width: 100%; height: 225px; object-fit: cover;"/>
-                            <div class="cn-content">
-                                <div class="cn-content-inner">
-                                    <a href="{% url 'single' i.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
-                                    </a>
-                                    <a class="cn-title" href="{% url 'single' i.slug %}">{{i.title}}</a>
-                                </div>
+                    <div class="col">
+                        <div class="news-card-custom position-relative height-240" style="height: 240px;">
+                            <img src="{{ i.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ i.title }}"/>
+                            <div class="card-gradient-overlay">
+                                <span class="text-white-50 small"><i class="far fa-clock me-2"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                                <h6 class="mt-1 mb-0 text-line-clamp-2" style="font-size: 14px; line-height: 1.4;">
+                                    <a href="{% url 'single' i.slug %}" class="text-white text-decoration-none stretched-link font-weight-bold">{{ i.title }}</a>
+                                </h6>
                             </div>
                         </div>
                     </div>
+                    {% empty %}
+                    <div class="col-12"><p class="text-muted">{% trans "Hozircha maqolalar yo'q" %}</p></div>
                     {% endfor %}
                 </div>
             </div>
@@ -103,47 +251,50 @@
 <!-- Category News End-->
 
 
-<!-- Category News Start-->
-<div class="cat-news">
+<!-- Category News Start (Iqtisodiyot va Ta'lim) -->
+<div class="cat-news py-5">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
-                <h2><i class="fas fa-align-justify"></i>{% trans 'Iqtisodiyot' %}</h2>
-                <div class="row cn-slider">
+        <div class="row g-5">
+            <!-- Iqtisodiyot -->
+            <div class="col-lg-6">
+                <h2 class="mb-4 d-flex align-items-center font-weight-bold"><i class="fas fa-chart-line text-success me-2"></i> {% trans 'Iqtisodiyot' %}</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
                     {% for i in iqtisod %}
-                    <div class="col-md-6">
-                        <div class="cn-img">
-                            <img src="{{ i.cover.url }}" style="width: 100%; height: 225px; object-fit: cover;"/>
-                            <div class="cn-content">
-                                <div class="cn-content-inner">
-                                    <a href="{% url 'single' i.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
-                                    </a>
-                                    <a class="cn-title" href="{% url 'single' i.slug %}">{{ i.title }}</a>
-                                </div>
+                    <div class="col">
+                        <div class="news-card-custom position-relative height-240" style="height: 240px;">
+                            <img src="{{ i.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ i.title }}"/>
+                            <div class="card-gradient-overlay">
+                                <span class="text-white-50 small"><i class="far fa-clock me-2"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                                <h6 class="mt-1 mb-0 text-line-clamp-2" style="font-size: 14px; line-height: 1.4;">
+                                    <a href="{% url 'single' i.slug %}" class="text-white text-decoration-none stretched-link font-weight-bold">{{ i.title }}</a>
+                                </h6>
                             </div>
                         </div>
                     </div>
+                    {% empty %}
+                    <div class="col-12"><p class="text-muted">{% trans "Hozircha maqolalar yo'q" %}</p></div>
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-md-6">
-                <h2><i class="fas fa-align-justify"></i>{% trans "Ta'lim" %}</h2>
-                <div class="row cn-slider">
+
+            <!-- Ta'lim -->
+            <div class="col-lg-6">
+                <h2 class="mb-4 d-flex align-items-center font-weight-bold"><i class="fas fa-book-reader text-warning me-2"></i> {% trans "Ta'lim" %}</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
                     {% for i in edu %}
-                    <div class="col-md-6">
-                        <div class="cn-img">
-                            <img src="{{ i.cover.url }}" style="width: 100%; height: 225px; object-fit: cover;"/>
-                            <div class="cn-content">
-                                <div class="cn-content-inner">
-                                    <a href="{% url 'single' i.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
-                                    </a>
-                                    <a class="cn-title" href="{% url 'single' i.slug %}">{{i.title}}</a>
-                                </div>
+                    <div class="col">
+                        <div class="news-card-custom position-relative height-240" style="height: 240px;">
+                            <img src="{{ i.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ i.title }}"/>
+                            <div class="card-gradient-overlay">
+                                <span class="text-white-50 small"><i class="far fa-clock me-2"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                                <h6 class="mt-1 mb-0 text-line-clamp-2" style="font-size: 14px; line-height: 1.4;">
+                                    <a href="{% url 'single' i.slug %}" class="text-white text-decoration-none stretched-link font-weight-bold">{{ i.title }}</a>
+                                </h6>
                             </div>
                         </div>
                     </div>
+                    {% empty %}
+                    <div class="col-12"><p class="text-muted">{% trans "Hozircha maqolalar yo'q" %}</p></div>
                     {% endfor %}
                 </div>
             </div>
@@ -152,143 +303,178 @@
 </div>
 <!-- Category News End-->
 
-
-<!-- Main News Start-->
-<div class="main-news">
+<!-- Main News Start -->
+<div class="main-news py-5 bg-light">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h2><i class="fas fa-align-justify"></i>{% trans 'Oxirgi yangiliklar' %}</h2>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="mn-img">
-                                    <img src="{{ latest_new.cover.url }}"
-                                         style="width: 100%; height: 350px; object-fit: cover;"/>
+        <div class="row g-4">
+            <!-- Chap tomondagi Asosiy Lenta -->
+            <div class="col-lg-8">
+                <!-- Oxirgi yangiliklar sektsiyasi -->
+                <div class="mb-5">
+                    <h2 class="mb-4 font-weight-bold"><i class="fas fa-bolt text-warning me-2"></i>{% trans 'Oxirgi yangiliklar' %}</h2>
+                    <div class="row g-4 align-items-stretch">
+                        <div class="col-md-6">
+                            <div class="news-card-custom p-2">
+                                <div style="height: 240px; overflow:hidden; border-radius:8px;">
+                                    <img src="{{ latest_new.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ latest_new.title }}"/>
                                 </div>
-                                <div class="mn-content">
-                                    <a class="mn-title" href="{% url 'single' latest_new.slug %}">{{ latest_new.title }}</a>
-                                    <a href="{% url 'single' latest_new.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}{{ latest_new.created_at|time:" h:i" }}
-                                    </a>
-                                    <p class="mn-text-slice">
-                                        {{ latest_new.body|truncatewords:20 }}
-                                    </p>
+                                <div class="p-3 position-relative flex-grow-1 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="font-weight-bold mb-2" style="font-size: 17px; line-height: 1.4;">
+                                            <a class="stretched-link" style="color: var(--text-main);" href="{% url 'single' latest_new.slug %}">{{ latest_new.title }}</a>
+                                        </h5>
+                                        <p class="text-muted small mb-3">{{ latest_new.body|truncatewords:15 }}</p>
+                                    </div>
+                                    <span class="text-muted small d-block"><i class="far fa-clock me-2"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}</span>
                                 </div>
                             </div>
-
-                            <div class="col-lg-6">
-                                {% for i in news %}
-                                <div class="mn-list" style="margin-bottom: 15px;">
-                                    <div class="mn-img"
-                                         style="width: 100px; height: 75px; float: left; margin-right: 15px;">
-                                        <img src="{{ i.cover.url }}"
-                                             style="width: 100%; height:100%; object-fit: cover;"/>
-                                    </div>
-                                    <div class="mn-content">
-                                        <a class="mn-title" href="{% url 'single' i.slug %}">{{ i.title }}</a>
-                                        <a href="{% url 'single' i.slug %}">
-                                            <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
-                                        </a>
-                                    </div>
-                                    <div style="clear: both;"></div>
-                                </div>
-                                {% endfor %}
-                            </div>
-
                         </div>
-                    </div>
 
-                    <div class="col-md-12" style="margin-top: 30px;">
-                        <h2><i class="fas fa-align-justify"></i>{% trans 'Mashhur Yangiliklar' %}</h2>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="mn-img">
-                                    <img src="{{latest_new.cover.url}}"/>
+                        <div class="col-md-6">
+                            {% for i in news %}
+                            <div class="d-flex align-items-center p-2 mb-3 rounded news-card-custom position-relative" style="flex-direction: row; height: auto;">
+                                <div class="flex-shrink-0" style="width: 110px; height: 85px; overflow:hidden; border-radius:6px;">
+                                    <img src="{{ i.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ i.title }}"/>
                                 </div>
-                                <div class="mn-content">
-                                    <a class="mn-title"
-                                       href="{% url 'single' latest_new.slug %}">{{latest_new.title}}</a>
-                                    <a href="{% url 'single' latest_new.slug %}">
-                                        <i class="far fa-clock mr-1"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}{{ latest_new.created_at|time:" h:i" }}
-                                    </a>
-                                    <p>
-                                        {{latest_new.title}}
-                                    </p>
+                                <div class="flex-grow-1" style="padding-left:15px;">
+                                    <h6 class="mb-1 text-line-clamp-2" style="font-size:14px; line-height:1.4;">
+                                        <a class="stretched-link font-weight-bold" style="color: var(--text-main);" href="{% url 'single' i.slug %}">{{ i.title }}</a>
+                                    </h6>
+                                    <small class="text-muted"><i class="far fa-clock me-2"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}</small>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                {% for i in news %}
-                                <div class="mn-list">
-                                    <div class="mn-img">
-                                        <img src="{{i.cover.url}}"/>
-                                    </div>
-                                    <div class="mn-content">
-                                        <a class="mn-title" href="{% url 'single' i.slug %}">{{i.title}}</a>
-                                        <a href="{% url 'single' i.slug %}">
-                                            <i class="far fa-clock mr-1"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}{{ i.created_at|time:" h:i" }}
-                                        </a>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
+                            {% empty %}
+                            <p class="text-muted">{% trans "Hozircha maqolalar yo'q" %}</p>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
+
+                <!-- Mashhur Yangiliklar sektsiyasi -->
+                {% with popular_list=popular_news|default:news %}
+                <div>
+                    <h2 class="mb-4 font-weight-bold"><i class="fas fa-fire text-danger me-2"></i>{% trans 'Mashhur Yangiliklar' %}</h2>
+                    <div class="row g-4 align-items-stretch">
+                        <div class="col-md-6">
+                            <div class="news-card-custom p-2">
+                                <div style="height: 240px; overflow:hidden; border-radius:8px;">
+                                    <img src="{{ latest_new.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ latest_new.title }}"/>
+                                </div>
+                                <div class="p-3 position-relative">
+                                    <h5 class="font-weight-bold mb-2" style="font-size: 17px; line-height: 1.4;">
+                                        <a class="stretched-link" style="color: var(--text-main);" href="{% url 'single' latest_new.slug %}">{{ latest_new.title }}</a>
+                                    </h5>
+                                    <span class="text-muted small d-block"><i class="far fa-clock me-2"></i>{{ latest_new.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% for i in popular_list %}
+                            <div class="d-flex align-items-center p-2 mb-3 rounded news-card-custom position-relative" style="flex-direction: row; height: auto;">
+                                <div class="flex-shrink-0" style="width: 110px; height: 85px; overflow:hidden; border-radius:6px;">
+                                    <img src="{{ i.cover.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ i.title }}"/>
+                                </div>
+                                <div class="flex-grow-1" style="padding-left:15px;">
+                                    <h6 class="mb-1 text-line-clamp-2" style="font-size:14px; line-height:1.4;">
+                                        <a class="stretched-link font-weight-bold" style="color: var(--text-main);" href="{% url 'single' i.slug %}">{{ i.title }}</a>
+                                    </h6>
+                                    <small class="text-muted"><i class="far fa-clock me-2"></i>{{ i.created_at|date:"SHORT_DATE_FORMAT" }}</small>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">{% trans "Hozircha maqolalar yo'q" %}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
             </div>
 
-            <div class="col-md-4">
-                <div class="sidebar">
+            <!-- O'ng tomondagi Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar position-sticky" style="top: 20px;">
+
+                    <!-- Kategoriyalar -->
                     <div class="sidebar-widget">
-                        <h2><i class="fas fa-align-justify"></i>{% trans 'Kategoriyalar' %}</h2>
+                        <h2><i class="fas fa-folder text-secondary me-2"></i>{% trans 'Kategoriyalar' %}</h2>
                         <div class="category">
-                            <ul class="fa-ul">
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'local' %}">{% trans 'Mahalliy' %}</a></li>
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'global' %}">{% trans 'Xorijiy' %}</a></li>
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'techno' %}">{% trans 'Texnologiya' %}</a></li>
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'sport' %}">{% trans 'Sport' %}</a></li>
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'finance' %}">{% trans 'Iqtisodiyot' %}</a></li>
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'society' %}">{% trans 'Jamiyat' %}</a></li>
-                                <li><span class="fa-li"><i class="far fa-arrow-alt-circle-right"></i></span><a href="{% url 'edu' %}">{% trans "Ta'lim" %}</a></li>
+                            <ul class="list-unstyled mb-0">
+                                <li class="py-2 border-bottom"><a href="{% url 'local' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans 'Mahalliy' %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
+                                <li class="py-2 border-bottom"><a href="{% url 'global' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans 'Xorijiy' %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
+                                <li class="py-2 border-bottom"><a href="{% url 'techno' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans 'Texnologiya' %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
+                                <li class="py-2 border-bottom"><a href="{% url 'sport' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans 'Sport' %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
+                                <li class="py-2 border-bottom"><a href="{% url 'finance' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans 'Iqtisodiyot' %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
+                                <li class="py-2 border-bottom"><a href="{% url 'society' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans 'Jamiyat' %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
+                                <li class="py-2"><a href="{% url 'edu' %}" class="text-decoration-none d-flex justify-content-between"><span><i class="far fa-arrow-alt-circle-right text-muted me-2"></i>{% trans "Ta'lim" %}</span> <i class="fas fa-chevron-right text-muted small pt-1"></i></a></li>
                             </ul>
                         </div>
                     </div>
 
+                    <!-- Taglar -->
                     <div class="sidebar-widget">
-                        <h2><i class="fas fa-align-justify"></i>{% trans 'Taglar' %}</h2>
+                        <h2><i class="fas fa-tags text-secondary me-2"></i>{% trans 'Taglar' %}</h2>
                         <div class="tags">
                             {% for i in tag %}
-                            <a href="">{{i.name}}</a>
+                            <a href="javascript:void(0);"># {{ i.name }}</a>
+                            {% empty %}
+                            <span class="text-muted small">{% trans "Taglar yo'q" %}</span>
                             {% endfor %}
                         </div>
                     </div>
 
-                    <div class="sidebar-widget">
-                        <h2><i class="fas fa-align-justify"></i>{% trans 'Reklama uchun1' %}</h2>
-                        <div class="image">
-                            <a href=""><img src="{% static 'img/adds-1.jpg' %}" alt="Image"></a>
+                    <!-- Reklama 1 -->
+                    <div class="sidebar-widget p-0 bg-transparent border-0 shadow-none text-center">
+                        <small class="text-muted d-block text-uppercase mb-1" style="font-size:10px; letter-spacing:1px;">{% trans 'Reklama' %}</small>
+                        <div class="image rounded overflow-hidden shadow-sm">
+                            <a href=""><img src="{% static 'img/adds-1.jpg' %}" alt="Advertisement" class="img-fluid w-100" style="max-height: 250px; object-fit: cover;"></a>
                         </div>
                     </div>
 
-                    <div class="sidebar-widget">
-                        <h2><i class="fas fa-align-justify"></i>{% trans 'Reklama uchun2' %}</h2>
+                    <!-- Reklama 2 -->
+                    <div class="sidebar-widget p-0 bg-transparent border-0 shadow-none text-center mt-4">
+                        <small class="text-muted d-block text-uppercase mb-1" style="font-size:10px; letter-spacing:1px;">{% trans 'Homiy kontenti' %}</small>
                         <div class="image">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <a href=""><img src="{% static 'img/adds-2.jpg' %}" alt="Image"></a>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="" class="d-block rounded overflow-hidden shadow-sm"><img src="{% static 'img/adds-2.jpg' %}" alt="Adv" class="img-fluid w-100" style="height:120px; object-fit:cover;"></a>
                                 </div>
-                                <div class="col-sm-6">
-                                    <a href=""><img src="{% static 'img/adds-2.jpg' %}" alt="Image"></a>
+                                <div class="col-6">
+                                    <a href="" class="d-block rounded overflow-hidden shadow-sm"><img src="{% static 'img/adds-2.jpg' %}" alt="Adv" class="img-fluid w-100" style="height:120px; object-fit:cover;"></a>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 <!-- Main News End-->
+
+<script>
+    (function () {
+        var body = document.body;
+        var btn = document.getElementById('theme-toggle');
+        var iconMoon = document.getElementById('icon-moon');
+        var iconSun = document.getElementById('icon-sun');
+        var saved = localStorage.getItem('news24-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        function applyTheme(isDark) {
+            body.classList.toggle('dark-mode', isDark);
+            iconMoon.classList.toggle('d-none', isDark);
+            iconSun.classList.toggle('d-none', !isDark);
+        }
+
+        applyTheme(saved === 'dark' || (!saved && prefersDark));
+
+        btn.addEventListener('click', function () {
+            var isDark = !body.classList.contains('dark-mode');
+            applyTheme(isDark);
+            localStorage.setItem('news24-theme', isDark ? 'dark' : 'light');
+        });
+    })();
+</script>
 
 {% endblock content %}

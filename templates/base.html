@@ -1,229 +1,682 @@
 <!DOCTYPE html>
 {% load static %}
 {% load i18n %}
-<html lang="uz">
+<html lang="{{ request.LANGUAGE_CODE|default:'uz' }}">
     <head>
         <meta charset="utf-8">
         <title>{% trans "News 24 - Eng So'nggi Yangiliklar" %}</title>
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="Bootstrap Ecommerce Template" name="keywords">
-        <meta content="Bootstrap Ecommerce Template Free Download" name="description">
 
-            <!-- Favicon -->
-        <link href="img/favicon.ico" rel="icon">
+        <link href="{% static 'img/favicon.ico' %}" rel="icon">
 
-        <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
 
-        <!-- CSS Libraries -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-        <link href="lib/slick/slick.css" rel="stylesheet">
-        <link href="lib/slick/slick-theme.css" rel="stylesheet">
 
-        <!-- Template Stylesheet -->
         <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+        <style>
+            /* Zamonaviy Ranglar Tizimi (Dark Mode bilan) */
+            :root {
+                --bg-body: #f4f6f9;
+                --bg-card: #ffffff;
+                --text-main: #1e293b;
+                --text-muted: #64748b;
+                --border-color: #e2e8f0;
+                --accent: #ff6f61;
+                --bg-navbar: #0f172a;
+            }
+            body.dark-mode {
+                --bg-body: #0b0f19;
+                --bg-card: #131c2e;
+                --text-main: #f1f5f9;
+                --text-muted: #94a3b8;
+                --border-color: #1e293b;
+                --bg-navbar: #131c2e;
+            }
+            body {
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                transition: background-color .3s, color .3s;
+                font-family: 'Open Sans', sans-serif;
+            }
+
+            /* Yuqori Header */
+            .top-header {
+                background: var(--bg-card);
+                border-bottom: 1px solid var(--border-color);
+                padding: 15px 0;
+            }
+            .top-header .search input {
+                background: var(--bg-body);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                border-radius: 30px 0 0 30px;
+                padding: 10px 20px;
+                width: 80%;
+                outline: none;
+            }
+            .top-header .search button {
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 0 30px 30px 0;
+                cursor: pointer;
+            }
+            .top-header .social a {
+                color: var(--text-muted);
+                margin: 0 8px;
+                font-size: 16px;
+                transition: color 0.2s;
+            }
+            .top-header .social a:hover {
+                color: var(--accent);
+            }
+
+            /* Profil/Login Tugmasi */
+            .login-btn {
+                background: linear-gradient(135deg, var(--accent) 0%, #ff4a38 100%);
+                color: #fff !important;
+                padding: 10px 22px;
+                border-radius: 30px;
+                font-weight: 600;
+                box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+            .login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 14px rgba(255, 111, 97, 0.4);
+                text-decoration: none;
+            }
+
+            /* Navbar va Menyu */
+            .header {
+                background: var(--bg-navbar) !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .navbar {
+                padding: 0;
+            }
+            .navbar-dark .navbar-nav .nav-link {
+                color: #cbd5e1;
+                font-weight: 600;
+                padding: 20px 15px !important;
+                position: relative;
+                transition: color 0.3s;
+            }
+            .navbar-dark .navbar-nav .nav-link:hover,
+            .navbar-dark .navbar-nav .nav-link.active-menu {
+                color: #fff !important;
+            }
+            .navbar-dark .navbar-nav .nav-link.active-menu::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 15px;
+                right: 15px;
+                height: 3px;
+                background: var(--accent);
+                border-radius: 3px 3px 0 0;
+            }
+
+            /* Til Dropdown (Yangi chiroyli dizayn) */
+            .lang-dropdown .dropdown-toggle {
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff !important;
+                border: 1px solid rgba(255,255,255,0.2);
+                padding: 6px 14px !important;
+                border-radius: 20px;
+                font-size: 14px;
+            }
+            .lang-dropdown .dropdown-toggle::after {
+                margin-left: 6px;
+            }
+            .lang-dropdown .dropdown-menu {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                min-width: 100px;
+            }
+            .lang-dropdown .dropdown-item {
+                color: var(--text-main);
+                font-weight: 600;
+                padding: 8px 16px;
+                border: none;
+                background: transparent;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+            }
+            .lang-dropdown .dropdown-item:hover {
+                background: rgba(128,128,128,0.08);
+                color: var(--accent);
+            }
+
+            /* Mutlaqo Yangicha Footer */
+            .main-footer {
+                background: #0f172a;
+                color: #94a3b8;
+                padding: 80px 0 40px 0;
+                font-size: 14px;
+                border-top: 4px solid var(--accent);
+            }
+            .footer-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 2fr;
+                gap: 40px;
+            }
+            @media (max-width: 991px) {
+                .footer-grid { grid-template-columns: 1fr 1fr; }
+            }
+            @media (max-width: 575px) {
+                .footer-grid { grid-template-columns: 1fr; }
+            }
+            .footer-brand h3 {
+                color: #fff;
+                font-size: 24px;
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+            .footer-col h4 {
+                color: #fff;
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 25px;
+                position: relative;
+                padding-bottom: 10px;
+            }
+            .footer-col h4::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 35px;
+                height: 2px;
+                background: var(--accent);
+            }
+            .footer-links {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .footer-links li {
+                margin-bottom: 12px;
+            }
+            .footer-links a {
+                color: #94a3b8;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+            .footer-links a:hover {
+                color: #fff;
+                padding-left: 5px;
+            }
+            .footer-social-icons a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                background: rgba(255,255,255,0.05);
+                color: #fff;
+                border-radius: 50%;
+                margin-right: 8px;
+                transition: all 0.3s;
+            }
+            .footer-social-icons a:hover {
+                background: var(--accent);
+                transform: translateY(-3px);
+            }
+            .footer-input-group {
+                display: flex;
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 30px;
+                padding: 4px;
+                overflow: hidden;
+            }
+            .footer-input-group input {
+                background: transparent;
+                border: none;
+                padding: 10px 15px;
+                color: #fff;
+                flex-grow: 1;
+                outline: none;
+            }
+            .footer-input-group button {
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                padding: 0 20px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+            }
+            .footer-bottom-new {
+                background: #090d16;
+                padding: 20px 0;
+                border-top: 1px solid rgba(255,255,255,0.05);
+                color: #64748b;
+                font-size: 13px;
+            }
+            /* Qidiruv paneli wrapperi */
+.search-wrapper {
+    display: flex;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    background: var(--bg-body);
+    overflow: hidden; /* Ichidagi elementlar burchakdan chiqib ketmasligi uchun */
+    height: 44px; /* Ikkala element balandligini bir xil qilish */
+}
+
+.top-header .search input {
+    background: transparent;
+    color: var(--text-main);
+    border: none !important;
+    padding: 0 20px;
+    width: 100%;
+    height: 100%;
+    outline: none;
+}
+
+.top-header .search button {
+    background: var(--accent);
+    color: #fff;
+    border: none !important;
+    height: 100%;
+    padding: 0 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.top-header .search button:hover {
+    background: #ff4a38;
+}
+
+/* Profil / Login tugmasi o'lchamini to'g'rilash */
+.auth-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 44px; /* Qidiruv paneli bilan bir xil balandlikda */
+}
+
+.login-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, #ff4a38 100%);
+    color: #fff !important;
+    height: 100%; /* Balandlikni wrapper bilan bir xil qiladi */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 30px; /* Yonlaridan joy qoldirish orqali tugma cho'zilib ketmaydi */
+    border-radius: 30px;
+    font-weight: 600;
+    white-space: nowrap; /* Matn pastga tushib ketmasligi uchun */
+    box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(255, 111, 97, 0.4);
+    text-decoration: none;
+}
+            /* Yangicha Premium Footer Dizayni */
+.main-footer {
+    background: #0f172a;
+    color: #cbd5e1; /* Matnlar yaxshi ko'rinishi uchun yorqinroq rang */
+    padding: 60px 0 40px 0;
+    font-size: 14px;
+    border-top: 4px solid var(--accent);
+}
+
+.footer-brand h3 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+/* Tavsif matni o'qilishi uchun rangni ochaytiramiz */
+.footer-brand p,
+.footer-col > p {
+    color: #94a3b8 !important;
+    line-height: 1.6;
+}
+
+/* Sarlavha va chiziq orasidagi masofani to'g'rilash (padding-bottom oshirildi) */
+.footer-col h4 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 12px; /* Chiziq matnga yopishib qolmasligi uchun */
+}
+
+.footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 35px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+    padding-left: 6px; /* Silliq surilish effekti */
+}
+
+/* Ijtimoiy tarmoqlar doiralari */
+.footer-social-icons {
+    margin-top: 20px;
+}
+
+.footer-social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.footer-social-icons a:hover {
+    background: var(--accent);
+    color: #ffffff;
+    transform: translateY(-3px);
+}
+
+/* Obuna bo'limi input guruhi */
+.footer-input-group {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 5px 5px 5px 15px;
+    margin-top: 15px;
+}
+
+.footer-input-group input {
+    background: transparent;
+    border: none !important;
+    color: #ffffff;
+    flex-grow: 1;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+}
+
+.footer-input-group input::placeholder {
+    color: #64748b;
+}
+
+.footer-input-group button {
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s;
+}
+
+.footer-input-group button:hover {
+    background: #ff4a38;
+}
+
+/* Footer eng pastki qismi */
+.footer-bottom-new {
+    background: #090d16;
+    padding: 22px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: #64748b;
+    font-size: 13px;
+}
+            /* Yangiliklar kartochkasi dizaynini tekislash */
+.news-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+/* Rasm ustidagi qorong'u qatlamni gradient qilish (shunda matn har qanday rasmda o'qiladi) */
+.news-card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+}
+
+/* Kontentni mutloq joylashtirish va flex berish */
+.news-card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Sana va sarlavha orasida aniq masofa yaratadi */
+}
+
+/* Sanani chiroyli tartibga solish */
+.news-card-meta {
+    display: flex;
+    align-items: center;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.news-card-meta i {
+    margin-right: 6px;
+    color: var(--accent);
+}
+
+/* Sarlavha matni - endi sanaga urilib ketmaydi */
+.news-card-title {
+    color: #ffffff !important;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0;
+    text-decoration: none;
+}
+        </style>
     </head>
 
     <body>
-        <!-- Top Header Start -->
-<div class="top-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <!-- Logotip (3 ustun) -->
-            <div class="col-lg-3 col-md-3">
-                <div class="logo">
-                    <a href="">
-                        <img src="{% static 'img/logo.png' %}" alt="Logo">
-                    </a>
-                </div>
-            </div>
-
-            <!-- Qidiruv paneli (5 ustun) -->
-            <div class="col-lg-5 col-md-5">
-                <form class="search" method="GET">
-                    {% csrf_token %}
-                    <input type="text" placeholder="{% trans 'Qidiruv' %}" name="q">
-                    <button type="submit"><i class="fa fa-search"></i></button>
-                </form>
-            </div>
-
-            <!-- Ijtimoiy tarmoqlar va Auth qismi (4 ustun) -->
-            <div class="col-lg-4 col-md-4">
-                    <div class="header-right-side" style="display: flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px;">
-
-                    <!-- Ijtimoiy tarmoqlar -->
-                    <div class="social">
-                        <a href=""><i class="fab fa-twitter"></i></a>
-                        <a href=""><i class="fab fa-facebook"></i></a>
-                        <a href=""><i class="fab fa-linkedin"></i></a>
-                        <a href=""><i class="fab fa-instagram"></i></a>
-                        <a href=""><i class="fab fa-youtube"></i></a>
-                    </div>
-
-                    <!-- Kirish / Profil -->
-                    <div class="auth-btn-wrap">
-                        <div class="auth-section">
-                            {% if user.is_authenticated %}
-                                <a href="{% url 'profile' user.profile.pk %}" class="login-btn">
-                                    <i class="fas fa-user"></i> {% trans 'Profil' %}
-                                </a>
-                            {% else %}
-                                <a href="{% url 'login' %}" class="login-btn">
-                                    <i class="fas fa-sign-in-alt"></i> {% trans 'Kirish' %}
-                                </a>
-                            {% endif %}
+        <div class="top-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-3 col-md-3">
+                        <div class="logo">
+                            <a href="{% url 'home' %}">
+                                <img src="{% static 'img/logo.png' %}" alt="Logo">
+                            </a>
                         </div>
                     </div>
 
+                   <!-- Qidiruv paneli -->
+<div class="col-lg-5 col-md-5">
+    <form class="search" method="GET" action="{% url 'home' %}">
+        <div class="search-wrapper">
+            <input type="text" placeholder="{% trans 'Kalit so‘z bo‘yicha qidirish...' %}" name="q" value="{{ request.GET.q|default:'' }}">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<!-- Kirish / Profil -->
+<div class="col-lg-4 col-md-4">
+    <div class="auth-wrapper">
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' user.profile.pk %}" class="login-btn">
+                <i class="fas fa-user-circle mr-2"></i> {% trans 'Mening profilim' %}
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}" class="login-btn">
+                <i class="fas fa-sign-in-alt mr-2"></i> {% trans 'Tizimga kirish' %}
+            </a>
+        {% endif %}
+    </div>
+</div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<!-- Top Header End -->
-
-
-
-        <!-- Header Start -->
         <div class="header">
             <div class="container">
-                <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <nav class="navbar navbar-expand-md navbar-dark">
                     <a href="#" class="navbar-brand">{% trans 'MENYU' %}</a>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav m-auto">
-                            <a href="{% url 'home' %}" class="nav-item nav-link active">{% trans 'Bosh sahifa' %}</a>
-                            <a href="{% url 'local' %}" class="nav-item nav-link">{% trans 'Mahalliy' %}</a>
-                            <a href="{% url 'global' %}" class="nav-item nav-link">{% trans 'Xorijiy' %}</a>
-                            <a href="{% url 'techno' %}" class="nav-item nav-link">{% trans 'Texnologiya' %}</a>
-                            <a href="{% url 'sport' %}" class="nav-item nav-link">{% trans 'Sport' %}</a>
-                            <a href="{% url 'finance' %}" class="nav-item nav-link">{% trans 'Iqtisodiyot' %}</a>
-                            <a href="{% url 'society' %}" class="nav-item nav-link">{% trans 'Jamiyat' %}</a>
-                            <a href="{% url 'edu' %}" class="nav-item nav-link">{% trans "Ta'lim" %}</a>
-                            <a href="{% url 'contact' %}" class="nav-item nav-link">{% trans "Biz Bilan Bog'lanish" %}</a>
+                        {% with url_name=request.resolver_match.url_name %}
+                        <div class="navbar-nav mr-auto">
+                            <a href="{% url 'home' %}" class="nav-item nav-link {% if url_name == 'home' %}active-menu{% endif %}">{% trans 'Bosh sahifa' %}</a>
+                            <a href="{% url 'local' %}" class="nav-item nav-link {% if url_name == 'local' %}active-menu{% endif %}">{% trans 'Mahalliy' %}</a>
+                            <a href="{% url 'global' %}" class="nav-item nav-link {% if url_name == 'global' %}active-menu{% endif %}">{% trans 'Xorijiy' %}</a>
+                            <a href="{% url 'techno' %}" class="nav-item nav-link {% if url_name == 'techno' %}active-menu{% endif %}">{% trans 'Texnologiya' %}</a>
+                            <a href="{% url 'sport' %}" class="nav-item nav-link {% if url_name == 'sport' %}active-menu{% endif %}">{% trans 'Sport' %}</a>
+                            <a href="{% url 'finance' %}" class="nav-item nav-link {% if url_name == 'finance' %}active-menu{% endif %}">{% trans 'Iqtisodiyot' %}</a>
+                            <a href="{% url 'society' %}" class="nav-item nav-link {% if url_name == 'society' %}active-menu{% endif %}">{% trans 'Jamiyat' %}</a>
+                            <a href="{% url 'edu' %}" class="nav-item nav-link {% if url_name == 'edu' %}active-menu{% endif %}">{% trans "Ta'lim" %}</a>
+                            <a href="{% url 'contact' %}" class="nav-item nav-link {% if url_name == 'contact' %}active-menu{% endif %}">{% trans "Bog'lanish" %}</a>
+                        </div>
+                        {% endwith %}
 
-                            <form method="POST" action="{% url 'set_language' %}">
-                                {% csrf_token %}
-
-                                <input type="hidden" name="next" value="{{ request.path }}">
-                                <button type="submit" name="language" value="uz">Uz</button>
-                                <button type="submit" name="language" value="ru">Ru</button>
-                                <button type="submit" name="language" value="en">En</button>
-                            </form>
+                        <div class="navbar-nav ml-auto align-items-center">
+                            <div class="dropdown lang-dropdown">
+                                <button class="btn dropdown-toggle nav-link" type="button" id="langDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-globe mr-1"></i> {{ request.LANGUAGE_CODE|upper }}
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="langDropdown">
+                                    <form method="POST" action="{% url 'set_language' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.path }}">
+                                        <button type="submit" name="language" value="uz" class="dropdown-item">O'zbekcha</button>
+                                        <button type="submit" name="language" value="ru" class="dropdown-item">Русский</button>
+                                        <button type="submit" name="language" value="en" class="dropdown-item">English</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
-        <!-- Header End -->
         {% block content %}
-
-
         {% endblock content %}
 
-        <!-- Footer Start -->
-        <div class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h3 class="title">{% trans 'Foydali havolalar' %}</h3>
-                            <ul>
-                                <li><a href="#">{% trans 'Biz haqimizda' %}</a></li>
-                                <li><a href="#">{% trans 'Reklama berish' %}</a></li>
-                                <li><a href="#">{% trans 'Maxfiylik siyosati' %}</a></li>
-                                <li><a href="#">{% trans 'Foydalanish shartlari' %}</a></li>
-                                <li><a href="{% url 'contact' %}">{% trans "Bog'lanish" %}</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h3 class="title">{% trans 'Tezkor havolalar' %}</h3>
-                            <ul>
-                                <li><a href="{% url 'sport' %}">{% trans 'Sport' %}</a></li>
-                                <li><a href="{% url 'techno' %}">{% trans 'Texnologiya' %}</a></li>
-                                <li><a href="{% url 'finance' %}">{% trans 'Iqtisodiyot' %}</a></li>
-                                <li><a href="{% url 'edu' %}">{% trans "Ta'lim" %}</a></li>
-                                <li><a href="{% url 'society' %}">{% trans 'Jamiyat' %}</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h3 class="title">{% trans "Biz bilan bog'laning" %}</h3>
-                            <div class="contact-info">
-                                <p><i class="fa fa-map-marker"></i>{% trans 'Samarqand shahri, Toyloq tumani' %}</p>
-                                <p><i class="fa fa-envelope"></i>hojiyevdavron65@gmail.com</p>
-                                <p><i class="fa fa-phone"></i>+998931445307</p>
-                                <p><i class="fa fa-phone"></i>+998942673389</p>
-                                <div class="social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook"></i></a>
-                                    <a href=""><i class="fab fa-linkedin"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                    <a href=""><i class="fab fa-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-widget">
-                            <h3 class="title">{% trans "Obuna bo'ling" %}</h3>
-                            <div class="newsletter">
-                                <p>
-                                    {% trans "Eng so'nggi yangiliklar va maqolalardan birinchilardan bo'lib xabardor bo'lish uchun email manzilingizni qoldiring" %}
-                                </p>
-                                <form method="POST" action="#">
-                                    {% csrf_token %}
-                                    <input class="form-control" type="email" placeholder="{% trans 'Email manzilingiz' %}" name="email" required>
-                                    <button class="btn">Obuna</button>
-                                </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-
-
-        <!-- Footer Bottom Start -->
-        <div class="footer-bottom">
+        <footer class="main-footer">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-6 copyright">
-                        <p>{% trans 'Mualliflik huquqi &copy; 2026 News24. Barcha huquqlar himoyalangan' %}</p>
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <h3>News 24</h3>
+                        <p class="mb-4">{% trans "O‘zbekiston va jahon miqyosidagi eng so‘nggi, ishonchli va tezkor yangiliklarni taqdim etuvchi mustaqil axborot portali." %}</p>
+                        <div class="footer-social-icons">
+                            <a href="#"><i class="fab fa-telegram-plane"></i></a>
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                        </div>
                     </div>
 
-                    <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                    <div class="col-md-6 template-by">
-                        <p>{% trans 'Shablon muallifi: ' %}<a href="Xojiyev Davron">{% trans 'Xojiyev Davron' %}</a></p>
+                    <div class="footer-col">
+                        <h4>{% trans 'Ruknlar' %}</h4>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'local' %}">{% trans 'Mahalliy' %}</a></li>
+                            <li><a href="{% url 'global' %}">{% trans 'Xorijiy' %}</a></li>
+                            <li><a href="{% url 'techno' %}">{% trans 'Texnologiya' %}</a></li>
+                            <li><a href="{% url 'sport' %}">{% trans 'Sport' %}</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>{% trans 'Portal' %}</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">{% trans 'Biz haqimizda' %}</a></li>
+                            <li><a href="#">{% trans 'Reklama berish' %}</a></li>
+                            <li><a href="#">{% trans 'Maxfiylik siyosati' %}</a></li>
+                            <li><a href="{% url 'contact' %}">{% trans "Bog'lanish" %}</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>{% trans 'Obuna bo‘ling' %}</h4>
+                        <p class="mb-3">{% trans "Muhim yangiliklarni o‘tkazib yubormaslik uchun e-mail orqali obuna bo‘ling." %}</p>
+                        <form method="POST" action="#">
+                            {% csrf_token %}
+                            <div class="footer-input-group">
+                                <input type="email" placeholder="Email..." required name="email">
+                                <button type="submit">{% trans 'OK' %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <div class="footer-bottom-new">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-left mb-2 mb-md-0">
+                        <p class="m-0">&copy; 2026 News24. {% trans 'Barcha huquqlar himoyalangan.' %}</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-right">
+                        <p class="m-0">{% trans 'Dasturchi:' %} <a href="#" style="color: var(--accent); font-weight: 600; text-decoration: none;">Xojiyev Davron</a></p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Footer Bottom End -->
 
+        <a href="#" class="back-to-top" style="background: var(--accent); border-radius: 50%;"><i class="fa fa-chevron-up"></i></a>
 
-        <!-- Back to Top -->
-        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-
-
-        <!-- JavaScript Libraries -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/slick/slick.min.js"></script>
-
-
-        <!-- Template Javascript -->
-        <script src="{% static 'js/main.js' %}"></script>
     </body>
-<
+</html>
